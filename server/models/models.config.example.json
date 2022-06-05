@@ -1,0 +1,4 @@
+{
+  "databaseUri": "mongodb+srv://eric:ZUPG6426YWygaWQ@codesmith.hw47x.mongodb.net/?retryWrites=true&w=majority",
+  "databaseName": "starwars"
+}
