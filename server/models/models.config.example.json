@@ -1,4 +1,4 @@
 {
   "databaseUri": "mongodb://localhost/example",
-  "databaseName": "starwars"
+  "databaseName": "example"
 }
