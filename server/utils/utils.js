@@ -28,8 +28,9 @@ export class CustomError extends Error {
 
 export class ServerError extends CustomError {
   /**
+   * Custom error class for server-side errors
    * @param {string} message
-   * @param {number} statusCode
+   * @param {number} statusCode Default 500
    */
   constructor(message, statusCode = 500) {
     super(message, 'ServerError', statusCode);
@@ -38,8 +39,9 @@ export class ServerError extends CustomError {
 
 export class ClientError extends CustomError {
   /**
+   * Custom error class for client-side errors
    * @param {string} message
-   * @param {number} statusCode
+   * @param {number} statusCode Default 400
    */
   constructor(message, statusCode = 400) {
     super(message, 'ClientError', statusCode);
