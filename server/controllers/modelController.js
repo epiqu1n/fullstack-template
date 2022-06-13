@@ -1,4 +1,4 @@
-import { query, sql } from '../models/exampleModels.js'; 
+import { query, queryOne, sql } from '../models/exampleModel.js'; 
 const modelController = {};
 
 /**
@@ -22,7 +22,7 @@ modelController.getAllExamples = async function (req, res, next) {
 };
 
 /**
- * Adds an Example to the database
+ * Adds an Example to the database and stores it into `res.locals.newExample`
  * @type {import("express").RequestHandler}
  */
 modelController.addExample = async function (req, res, next) {
@@ -34,11 +34,12 @@ modelController.addExample = async function (req, res, next) {
   const getQuery = sql`
     INSERT INTO Examples ("name")
     VALUES ($1)
+    RETURNING "name"
   `;
   const params = [req.body.name];
 
   try {
-    await query(getQuery, params);
+    res.locals.newExample = await queryOne(getQuery, params);
     return next();
   } catch (err) {
     return next({
