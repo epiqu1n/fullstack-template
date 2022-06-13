@@ -1,11 +1,12 @@
 import { ServerError } from '../utils/utils.js';
 import { ExampleModel } from '../models/exampleModels.js';
 
+/** @typedef {import('express').RequestHandler} RequestHandler */
 const dbController = {};
 
 /**
- * Adds an Example to the database
- * @type {import('express').RequestHandler}
+ * Adds an Example to the database and stores the newly created Example into `res.locals.example`
+ * @type {RequestHandler}
  */
 dbController.addExample = async (req, res, next) => {
   if (typeof req.body.name !== 'string') return next({
@@ -14,20 +15,19 @@ dbController.addExample = async (req, res, next) => {
   });
 
   try {
-    await ExampleModel.create({ name: req.body.name });
+    res.locals.newExample = await ExampleModel.create({ name: req.body.name });
+    return next();
   } catch (err) {
     return next({
       msg: 'An error occurred adding example',
       err: err
     });
   }
-
-  return next();
 };
 
 /**
  * Retrieves all Examples from database and stores into `res.locals.examples`
- * @type {import('express').RequestHandler}
+ * @type {RequestHandler}
  */
 dbController.getAllExamples = async (req, res, next) => {
   try {
