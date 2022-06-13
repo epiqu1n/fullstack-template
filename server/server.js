@@ -1,5 +1,5 @@
 import express from 'express';
-import apiRouter from './routes/api.js';
+import exampleRouter from './routes/example.js';
 import fs from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -15,13 +15,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 // app.use('/assets', express.static(path.resolve(__dirname, '../client')));
+app.use('/', express.static(path.resolve(__dirname, '../dist')));
 
 /// Routes
-app.use('/api', apiRouter);
-
-app.get('/', function(req, res) {
-  res.status(200).sendFile(path.join(__dirname, '../client/index.html'));
-});
+app.use('/api/example', exampleRouter);
 
 
 // Catch-all
