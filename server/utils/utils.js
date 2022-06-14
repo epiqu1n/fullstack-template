@@ -87,8 +87,10 @@ export function warn(message = '', ...optionalParams) {
 export function getBodyProps(req, properties) {
   const newProps = {};
   for (const [key, type] of Object.entries(properties)) {
-    if (typeof req.body[key] !== type || req.body[key] === '')
+    if (typeof req.body[key] !== type)
       throw new ClientError(`Type "${typeof req.body[key]}" is invalid for property "${key}": "${type}"`);
+    else if (req.body[key] === '')
+      throw new ClientError(`Required property "${key}" cannot be empty`);
     newProps[key] = req.body[key];
   }
   return newProps;
