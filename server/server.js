@@ -4,7 +4,7 @@ import exampleRouter from './routes/example.js';
 import fs from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { CustomError, error, warn } from './utils/utils.js';
+import { CustomError, error } from './utils/utils.js';
 
 /// Initialization
 // Initialize config
