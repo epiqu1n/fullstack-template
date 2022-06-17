@@ -15,11 +15,11 @@ export class CustomError extends Error {
     this.statusCode = statusCode;
   }
   
-    /**
-     * @private
-     * Scrubs references to node_modules from stacktrace to make it more readable
-     * @param {string} stack 
-     */
+  /**
+   * @private
+   * Scrubs references to node_modules from stacktrace to make it more readable
+   * @param {string} stack 
+   */
   cleanStacktrace(stack) {
     const newStack = stack.split(/\n/g).filter((line, i) => i == 0 || !line.match(/node_modules/));
     return newStack.join('\n');
