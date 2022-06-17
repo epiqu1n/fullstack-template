@@ -1,11 +1,12 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import exampleRouter from './routes/example.js';
 import fs from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { CustomError, error, warn } from './utils/utils.js';
 
-///Initialization
+/// Initialization
 // Initialize config
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const _config = JSON.parse(await fs.readFile(path.join(__dirname, './server.config.json')));
@@ -13,7 +14,8 @@ const _config = JSON.parse(await fs.readFile(path.join(__dirname, './server.conf
 // Set up application
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 // app.use('/assets', express.static(path.resolve(__dirname, '../client')));
 app.use('/', express.static(path.resolve(__dirname, '../dist')));
 
@@ -22,7 +24,7 @@ app.use('/api/example', exampleRouter);
 
 
 // Catch-all
-app.all('*', function(req, res) {
+app.all('*', (req, res) => {
   return res.sendStatus(404);
 });
 
@@ -31,7 +33,7 @@ app.all('*', function(req, res) {
 /**
  * @type {express.ErrorRequestHandler}
  * @param {Error | {msg: string, err?: Error, code?: number}} info
- */ 
+ */
 function globalErrorHandler(info, req, res, next) {
   const err = (info instanceof Error ? info : info.err);
   const message = (info instanceof Error ? 'An unknown server error occurred' : info.msg);
