@@ -6,8 +6,8 @@
     "browser": true,
     "es2022": true
   },
-  "plugins": ["react"],
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:react-hooks/recommended"],
+  "plugins": ["react", "react-hooks", "@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:react-hooks/recommended", "plugin:@typescript-eslint/recommended"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaFeatures": {
@@ -21,13 +21,21 @@
       "MemberExpression": 0,
       "flatTernaryExpressions": true
     }],
-    "no-unused-vars": ["off", { "vars": "local" }],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", {
+      "vars": "local",
+      "args": "none"
+    }],
     "no-case-declarations": "off",
     "prefer-const": "warn",
     "quotes": ["warn", "single"],
-    "react/prop-types": "off",
+    "react/prop-types": "warn",
     "semi": ["warn", "always"],
-    "space-infix-ops": "warn"
+    "space-infix-ops": "warn",
+    "no-trailing-spaces": ["warn", {
+      "skipBlankLines": true,
+      "ignoreComments": true
+    }]
   },
   "settings": {
     "react": { "version": "detect"}
