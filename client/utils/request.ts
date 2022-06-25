@@ -74,13 +74,13 @@ export async function get(url: RequestInfo | URL, options?: RequestInit) {
  * Fetch POST request wrapper with built in response parsing and error handling
  * @throws {ServerError | ClientError} with message that can be displayed to the client
  */
-export async function post(url: RequestInfo | URL, body: BodyInit, options?: RequestInit) {
+export async function post(url: RequestInfo | URL, body: Record<string, unknown>, options?: RequestInit) {
   const defaultOpts: RequestInit = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body
+    body: JSON.stringify(body)
   };
   const opts = Object.assign(defaultOpts, options);
   
