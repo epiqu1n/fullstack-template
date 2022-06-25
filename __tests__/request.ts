@@ -26,6 +26,9 @@ global.fetch = jest.fn<MockFetch>((url, options) => {
 
 // Begin tests
 describe('Request module tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   describe('Handling of successful requests', () => {
     beforeAll(() => {
@@ -36,20 +39,28 @@ describe('Request module tests', () => {
       };
     });
 
-    it('should return the right body for a GET request', async () => {
+    it('should return the right body for a normal request', async () => {
       const response = await request('/someURL');
       expect(fetch).toHaveBeenCalled();
       expect(response).toEqual(fetchBody);
-      // expect()
     });
 
-    // TODO: get method
-    // TODO: post method
+    it('should return the right body for the `get` method', async () => {
+      const response = await get('/someURL');
+      expect(fetch).toHaveBeenCalled();
+      expect(response).toEqual(fetchBody);
+    });
+
+    it('should return the right body for the `post` method', async () => {
+      const response = await post('/someURL', { someData: 'hello' });
+      expect(fetch).toHaveBeenCalled();
+      expect(response).toEqual(fetchBody);
+    });
   });
 
   describe('Handling of failed requests due to client error', () => {
     beforeAll(() => {
-      fetchBody = { test: true };
+      fetchBody = { error: "Invalid post body" };
       fetchResponse = {
         body: fetchBody,
         status: 400
@@ -57,10 +68,11 @@ describe('Request module tests', () => {
     });
 
     it('should throw a ClientError when status code is 400-499', async () => {
-      let error: any;
-      await post('/fail', null).catch(err => error = err);
+      let error: Error;
+      await request('/clientfail', { method: 'POST', body: null }).catch(err => error = err);
       expect(error).toBeInstanceOf(ClientError);
-    })
-  })
+      expect(error.message).toEqual(fetchBody.error);
+    });
+  });
 
 });
