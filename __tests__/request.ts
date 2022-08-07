@@ -75,4 +75,20 @@ describe('Request module tests', () => {
     });
   });
 
+  describe('Handling of failed requests due to server error', () => {
+    beforeAll(() => {
+      fetchBody = { error: "Invalid post body" };
+      fetchResponse = {
+        body: fetchBody,
+        status: 500
+      };
+    });
+
+    it('should throw a ServerError when status code >= 500', async () => {
+      let error: Error;
+      await request('/clientfail', { method: 'POST', body: null }).catch(err => error = err);
+      expect(error).toBeInstanceOf(ServerError);
+      expect(error.message).toEqual(fetchBody.error);
+    })
+  });
 });
