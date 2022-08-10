@@ -68,10 +68,10 @@ describe('Request module tests', () => {
     });
 
     it('should throw a ClientError when status code is 400-499', async () => {
-      let error: Error;
+      let error: Error | undefined;
       await request('/clientfail', { method: 'POST', body: null }).catch(err => error = err);
       expect(error).toBeInstanceOf(ClientError);
-      expect(error.message).toEqual(fetchBody.error);
+      expect(error?.message).toEqual(fetchBody.error);
     });
   });
 
@@ -85,10 +85,10 @@ describe('Request module tests', () => {
     });
 
     it('should throw a ServerError when status code >= 500', async () => {
-      let error: Error;
+      let error: Error | undefined;
       await request('/clientfail', { method: 'POST', body: null }).catch(err => error = err);
       expect(error).toBeInstanceOf(ServerError);
-      expect(error.message).toEqual(fetchBody.error);
+      expect(error?.message).toEqual(fetchBody.error);
     })
   });
 });
