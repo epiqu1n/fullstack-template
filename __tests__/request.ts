@@ -1,4 +1,4 @@
-import { expect, jest, test } from '@jest/globals';
+import { expect, jest } from '@jest/globals';
 import request, { ClientError, get, post, ServerError } from '../client/utils/request';
 
 // Mock global fetch to return a specified body and status
