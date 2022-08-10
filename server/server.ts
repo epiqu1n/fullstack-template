@@ -1,15 +1,12 @@
-import express from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import cookieParser from 'cookie-parser';
-import exampleRouter from './routes/example.js';
-import fs from 'fs/promises';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { CustomError, error } from './utils/utils.js';
+import exampleRouter from './routes/example';
+import path from 'path';
+import { CustomError, error } from './utils/utils';
+import CONFIG from './server.config.json';
 
 /// Initialization
 // Initialize config
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const _config = JSON.parse(await fs.readFile(path.join(__dirname, './server.config.json')));
 
 // Set up application
 const app = express();
@@ -30,13 +27,9 @@ app.all('*', (req, res) => {
 
 
 // Global error handler
-/**
- * @type {express.ErrorRequestHandler}
- * @param {Error | {msg: string, err?: Error, code?: number}} info
- */
-function globalErrorHandler(info, req, res, next) {
-  const err = (info instanceof Error ? info : info.err);
-  const message = (info instanceof Error ? 'An unknown server error occurred' : info.msg);
+type MiddlewareError = { msg: string, err: string | CustomError | Error, code?: number }
+const globalErrorHandler: ErrorRequestHandler = function(info: MiddlewareError, req, res, next) {
+  const { err, msg: message } = info;
   const code = (
     typeof info.code === 'number' ? info.code
     : info.err instanceof CustomError ? info.err.statusCode
@@ -44,9 +37,9 @@ function globalErrorHandler(info, req, res, next) {
   );
   
   error(message);
-  error(err);
+  error(err.toString());
   return res.status(code).send({ error: message });
-}
+};
 app.use(globalErrorHandler);
 /*
   next({
@@ -59,6 +52,6 @@ app.use(globalErrorHandler);
 
 
 // Start server
-app.listen(_config.port, () => {
-  console.log(`Listening on port ${_config.port}`);
+app.listen(CONFIG.port, () => {
+  console.log(`Listening on port ${CONFIG.port}`);
 });
