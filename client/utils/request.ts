@@ -5,7 +5,7 @@ export class RequestError extends Error {
    * Custom error class for fetch request errors
    * @param statusCode Default 500
    */
-  constructor(message: string, statusCode = 500) {
+  constructor(message = 'An unknown request error occurred', statusCode = 500) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
@@ -17,7 +17,7 @@ export class ServerError extends RequestError {
    * Error class indicating that an error occurred at the fault of the server
    * @param statusCode Default 500
    */
-  constructor(message: string, statusCode = 500) {
+  constructor(message?: string, statusCode = 500) {
     super(message, statusCode);
   }
 }
@@ -27,7 +27,7 @@ export class ClientError extends RequestError {
    * Error class indicating that an error occurred at the fault of the client
    * @param statusCode Default 400
    */
-  constructor(message: string, statusCode = 400) {
+  constructor(message?: string, statusCode = 400) {
     super(message, statusCode);
   }
 }
