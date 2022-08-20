@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import webpack from 'webpack';
+import webpack, { Configuration } from 'webpack';
+import { Configuration as DevServerConfig } from 'webpack-dev-server';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 
-export default {
+const config: Configuration & DevServerConfig = {
   entry: './client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -11,7 +12,7 @@ export default {
     publicPath: '/'
   },
   devtool: 'eval-source-map', // inline-source-map?
-  mode: process.env.NODE_ENV,
+  mode: process.env.NODE_ENV as 'development' | 'production' | undefined,
   devServer: {
     host: 'localhost',
     port: 8080,
@@ -64,3 +65,5 @@ export default {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
   }
 };
+
+export default config;
