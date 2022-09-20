@@ -53,8 +53,8 @@ export function zip<A, B>(a: A[], b: B[]): (A | B)[] {
  * @param message
  * @param optionalParams 
  */
-export function error(message = '', ...optionalParams: unknown[]) {
-  console.error(colors.red(message), ...optionalParams.map(p => colors.red(typeof p === 'string' ? p : JSON.stringify(p))));
+export function error(message: unknown = '', ...optionalParams: unknown[]) {
+  console.error(colors.red(message as string), ...optionalParams.map(p => colors.red(typeof p === 'string' ? p : JSON.stringify(p))));
 }
 
 /**
@@ -62,29 +62,44 @@ export function error(message = '', ...optionalParams: unknown[]) {
  * @param message
  * @param optionalParams 
  */
-export function warn(message = '', ...optionalParams: unknown[]) {
-  console.warn(colors.yellow(message), ...optionalParams.map(p => colors.yellow(typeof p === 'string' ? p : JSON.stringify(p))));
+export function warn(message: unknown = '', ...optionalParams: unknown[]) {
+  console.warn(colors.yellow(message as string), ...optionalParams.map(p => colors.yellow(typeof p === 'string' ? p : JSON.stringify(p))));
+}
+
+interface TypeMap {
+  string: string,
+  number: number,
+  boolean: boolean,
+  symbol: symbol,
+  undefined: undefined,
+  object: object,
+  null: null
+}
+
+export type PropertyMap<PT extends Record<string, keyof TypeMap>> = {
+  [Key in keyof PT]: TypeMap[PT[Key]]
 }
 
 /**
  * Extracts the desired properties from a request body and checks that they are the correct type
- * @param req The Express request
- * @param propTypes An object mapping property names to their expected types
- * @returns The provided properties mapped to their values from the request body
- * @throws {TypeError} If the request body is missing a property or the property is the incorrect type
+ * @throws {ClientError} If the request body is missing a property or the property is the incorrect type
  */
-export function getBodyProps<T extends Record<string, string>>(req: Request, propTypes: T) {
-  // Would LOVE to figure out how to have types of values in newProps match up with propTypes
-  // e.g. getBodyProps(req, { prop1: 'string', prop2: 'number' }) --> typeof newProps === { prop1: string, prop2: number }
-  // Most useful thread I found helping with this was here: https://stackoverflow.com/questions/46247277/how-to-get-type-from-its-string-representation
-  const newProps = {} as Record<keyof T, unknown>;
-  for (const [key, type] of Object.entries(propTypes)) {
-    if (typeof req.body[key] !== type)
-      throw new ClientError(`Type "${typeof req.body[key]}" is invalid for property "${key}": "${type}"`);
+export function extractBody<EP extends Record<string, keyof TypeMap>>(req: Request, expectedProps: EP) {
+  const newProps = {} as PropertyMap<EP>;
+
+  for (const [key, expType] of Object.entries(expectedProps)) {
+    if (typeof req.body[key] !== expType)
+      throw new ClientError(`Type "${typeof req.body[key]}" is invalid for property "${key}": "${expType}"`);
     else if (req.body[key] === '')
       throw new ClientError(`Required property "${key}" cannot be empty`);
 
-    newProps[key as keyof T] = req.body[key];
+    newProps[key as keyof EP] = req.body[key];
   }
+  
   return newProps;
+}
+
+/** Checks if the provided value can be converted to a non-NaN number */
+export function isNum(value: unknown) {
+  return !isNaN(parseInt(value as string));
 }
