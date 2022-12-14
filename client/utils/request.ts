@@ -32,18 +32,19 @@ export class ClientError extends RequestError {
   }
 }
 
-type ResponseBody = {
+export interface ResponseBody<TData = unknown> {
   warning?: string,
-  error?: string
+  error?: string,
+  data?: TData
 };
 
 /**
  * Fetch request wrapper with built in response parsing and error handling
  * @throws {ServerError | ClientError} with message that can be displayed to the client
  */
-export default async function request(url: RequestInfo | URL, options?: RequestInit) {
+export default async function request<TResponse = unknown>(url: RequestInfo | URL, options?: RequestInit): Promise<ResponseBody<TResponse>> {
   // Make request
-  let response, data: ResponseBody;
+  let response, data: ResponseBody<TResponse>;
   try {
     response = await fetch(url, options);
     data = await response.json();
@@ -66,15 +67,15 @@ export default async function request(url: RequestInfo | URL, options?: RequestI
  * Fetch GET request wrapper with built in response parsing and error handling
  * @throws {ServerError | ClientError} with message that can be displayed to the client
  */
-export async function get(url: RequestInfo | URL, options?: RequestInit) {
-  return request(url, options);
+export async function get<TResponse = unknown>(url: RequestInfo | URL, options?: RequestInit) {
+  return request<TResponse>(url, options);
 }
 
 /**
  * Fetch POST request wrapper with built in response parsing and error handling
  * @throws {ServerError | ClientError} with message that can be displayed to the client
  */
-export async function post(url: RequestInfo | URL, body: Record<string, unknown>, options?: RequestInit) {
+export async function post<TResponse = unknown>(url: RequestInfo | URL, body: Object, options?: RequestInit) {
   const defaultOpts: RequestInit = {
     method: 'POST',
     headers: {
@@ -84,5 +85,5 @@ export async function post(url: RequestInfo | URL, body: Record<string, unknown>
   };
   const opts = Object.assign(defaultOpts, options);
   
-  return request(url, opts);
+  return request<TResponse>(url, opts);
 }
